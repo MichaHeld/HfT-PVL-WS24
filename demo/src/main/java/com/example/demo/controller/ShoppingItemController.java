@@ -1,13 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.ShoppingItem;
-import com.example.demo.repository.ShoppingItemRepository;
+import com.example.demo.service.ShoppingItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.server.ResponseStatusException;
-
 
 import java.util.List;
 
@@ -15,36 +13,43 @@ import java.util.List;
 @RequestMapping("/api/items")
 public class ShoppingItemController {
 
-    private final ShoppingItemRepository repository;
+    private final ShoppingItemService service;
 
+    // Injektion des Services statt des Repositories
     @Autowired
-    public ShoppingItemController(ShoppingItemRepository repository) {
-        this.repository = repository;
+    public ShoppingItemController(ShoppingItemService service) {
+        this.service = service;
     }
 
+    // Gibt alle Artikel zurück
     @GetMapping
     public List<ShoppingItem> getAllItems() {
-        return repository.findAll();
+        return service.getAllItems();
     }
 
+    // Fügt einen neuen Artikel hinzu
     @PostMapping
     public ShoppingItem addItem(@RequestBody ShoppingItem item) {
-        return repository.save(item);
+     // Beispiel: Zugriff auf die Menge (quantity)
+        int quantity = item.getQuantity(); // Wenn die Menge benötigt wird
+        return service.saveItem(item);
     }
-
+    // Löscht einen Artikel basierend auf der ID
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NO_CONTENT) // Gibt einen 204 HTTP-Status zurück, wenn gelöscht wurde
     public void deleteItem(@PathVariable Long id) {
-        repository.deleteById(id);
+        try {
+            service.deleteItem(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found", e);
+        }
     }
 
+    // Aktualisiert einen Artikel basierend auf der ID
     @PutMapping("/{id}")
     public ShoppingItem updateItem(@PathVariable Long id, @RequestBody ShoppingItem updatedItem) {
-        return repository.findById(id)
-                .map(item -> {
-                    item.setName(updatedItem.getName());
-                    item.setQuantity(updatedItem.getQuantity());
-                    return repository.save(item);
-                }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+      // Beispiel: Zugriff auf die Menge (quantity)
+      int quantity = updatedItem.getQuantity(); // Wenn die Menge benötigt wird
+      return service.updateItem(id, updatedItem);
     }
 }

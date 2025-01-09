@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopping-frontend
+  labels:
+    app: shopping
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: shopping
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: shopping
+        tier: frontend
+    spec:
+      containers:
+      - name: shopping-frontend
+        image: dein-docker-user/shopping-frontend:latest
+        ports:
+        - containerPort: 8082
+        env:
+        - name: BACKEND_API_URL
+          value: "http://shopping-backend:8080"

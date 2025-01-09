@@ -1,5 +1,5 @@
- 
-version: '3.8'
+version: "3.8"
+
 services:
   app:
     build: .
@@ -7,4 +7,22 @@ services:
       - "8080:8080"
     container_name: shoppinglist-app
 
+#services:
+#  frontend:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    ports:
+#      "3000:3000"
+#  environment:
+#    REACT_APP_BASE_URL=http://localhost:8080/api/items Adjust to the backend service in Docker
+#  deploy:
+#    replicas: 3  # Scale the number of frontend instances to 3
+#  networks:
+#    app-network
 
+#  backend:
+#    build:
+#      context: ./backend
+#      dockerfile: Dockerfile
+#    ports:

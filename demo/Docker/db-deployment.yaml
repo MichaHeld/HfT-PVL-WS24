@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopping-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopping
+      tier: database
+  template:
+    metadata:
+      labels:
+        app: shopping
+        tier: database
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:latest
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "password"
+        - name: MYSQL_DATABASE
+          value: "shopping"
+        ports:
+        - containerPort: 3306
